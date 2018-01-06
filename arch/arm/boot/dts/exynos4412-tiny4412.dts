@@ -1,0 +1,296 @@
+/*
+ * FriendlyARM's Exynos4412 based TINY4412 board device tree source
+ *
+ * Copyright (c) 2013 Alex Ling <kasimling@gmail.com>
+ *
+ * Device tree source file for FriendlyARM's TINY4412 board which is based on
+ * Samsung's Exynos4412 SoC.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+*/
+
+/dts-v1/;
+#include "exynos4412.dtsi"
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/usb4604/usb4604.h>
+#include <dt-bindings/tiny4412-lcds/samsung_fimd.h>
+
+/ {
+	model = "FriendlyARM TINY4412 board based on Exynos4412";
+	compatible = "friendlyarm,tiny4412", "samsung,exynos4412", "samsung,exynos4";
+
+	chosen {
+		stdout-path = &serial_0;
+		bootargs = "root=/dev/ram0 rw rootfstype=ext4 console=ttySAC0,115200 init=/linuxrc earlyprintk";
+	};
+
+	memory {
+		reg = <0x40000000 0x40000000>;
+	};
+
+	leds {
+		compatible = "gpio-leds";
+
+		led1 {
+			label = "led1";
+			gpios = <&gpm4 0 GPIO_ACTIVE_LOW>;
+			default-state = "off";
+			linux,default-trigger = "heartbeat";
+		};
+
+		led2 {
+			label = "led2";
+			gpios = <&gpm4 1 GPIO_ACTIVE_LOW>;
+			default-state = "off";
+		};
+
+		led3 {
+			label = "led3";
+			gpios = <&gpm4 2 GPIO_ACTIVE_LOW>;
+			default-state = "off";
+		};
+
+		led4 {
+			label = "led4";
+			gpios = <&gpm4 3 GPIO_ACTIVE_LOW>;
+			default-state = "off";
+			linux,default-trigger = "mmc0";
+		};
+	};
+
+	fixed-rate-clocks {
+		xxti {
+			compatible = "samsung,clock-xxti";
+			clock-frequency = <0>;
+		};
+
+		xusbxti {
+			compatible = "samsung,clock-xusbxti";
+			clock-frequency = <24000000>;
+		};
+	};
+	
+	tiny4412_ts_backlight {
+		compatible = "tiny4412_ts_backlight";
+		status = "okay";
+	};
+	tiny4412_1wire {
+		compatible = "tiny4412_1wire";
+		reg = <0x139D0000 0x1000>;
+		status = "okay";
+		1wire-gpio = <&gpx1 2 GPIO_ACTIVE_LOW>;
+		interrupts = <0 40 0>;
+		clocks = <&clock CLK_PWM>;
+		clock-names = "timer-3";
+	};
+	
+ 	usb-hub {
+		compatible = "smsc,usb4604";
+		reset-gpios = <&gpm2 4 GPIO_ACTIVE_LOW>;
+		initial-mode = <USB4604_MODE_HUB>;
+	};
+
+	tiny4412_lcd {
+		status = "okay";
+
+		s702{
+			width = <800>;
+			height = <480>;
+			p_width = <155>;
+			p_height = <93>;
+			bpp = <24>;
+			freq = <63>;
+			
+			timing {
+				h_fp = <80>;
+				h_bp = <36>;
+				h_sw = <10>;
+				v_fp = <22>;
+				v_fpe = <1>;
+				v_bp = <15>;
+				v_bpe = <1>;
+				v_sw = <8>;
+			};
+			
+			polarity {
+				rise_vclk;
+				inv_hsync;
+				inv_vsync;
+			};
+		};
+	};
+	
+};
+
+
+
+&mshc_0 {
+	num-slots = <1>;
+	broken-cd;
+	non-removable;
+	card-detect-delay = <200>;
+	clock-frequency = <400000000>;
+	samsung,dw-mshc-ciu-div = <0>;
+	samsung,dw-mshc-sdr-timing = <2 3>;
+	samsung,dw-mshc-ddr-timing = <1 2>;
+	pinctrl-0 = <&sd4_clk &sd4_cmd &sd4_bus4 &sd4_bus8>;
+	pinctrl-names = "default";
+	status = "okay";
+	bus-width = <8>;
+	cap-mmc-highspeed;
+};
+
+&fimd {
+	compatible = "samsung,exynos4-fb";
+	sclk_fimd-rate = <800000000>;
+	pinctrl-0 = <&lcd_clk &lcd_data24>;
+	pinctrl-names = "lcd0_pin_cfg";
+	sysreg_lcd_blk_cfg_offset = /bits/ 32 <0x0210>;
+	status = "okay";
+	lcd_name = "s702";
+	
+	lcd_default_config {
+		vidcon0 = <VIDCON0_VIDOUT_RGB VIDCON0_PNRMODE_RGB>;
+		vidcon1 = <VIDCON1_INV_HSYNC VIDCON1_INV_VSYNC>;
+		setup_gpio = "exynos4_fimd0_gpio_setup_24bpp";
+	
+		vtiming {
+			left_margin = <9>;
+			right_margin = <9>;
+			upper_margin = <5>;
+			lower_margin = <5>;
+			hsync_len = <2>;
+			vsync_len = <2>;
+			xres = <480>;
+			yres = <800>;
+		};
+		wins_array {
+			win0 {
+				xres = /bits/ 16 <480>;
+				yres = /bits/ 16 <800>;
+				virtual_x = /bits/ 16 <480>;
+				virtual_y = /bits/ 16 <800>;
+				max_bpp	 = /bits/ 16 <32>;
+				default_bpp	= /bits/ 16 <24>;
+				width = /bits/ 16 <66>;
+				height = /bits/ 16 <109>;
+			};
+
+			win1 {
+				xres = /bits/ 16 <480>;
+				yres = /bits/ 16 <800>;
+				virtual_x = /bits/ 16 <480>;
+				virtual_y = /bits/ 16 <800>;
+				max_bpp	 = /bits/ 16 <32>;
+				default_bpp	= /bits/ 16 <24>;
+				width = /bits/ 16 <66>;
+				height = /bits/ 16 <109>;
+			};
+
+			win2 {
+				xres = /bits/ 16 <480>;
+				yres = /bits/ 16 <800>;
+				virtual_x = /bits/ 16 <480>;
+				virtual_y = /bits/ 16 <800>;
+				max_bpp	 = /bits/ 16 <32>;
+				default_bpp	= /bits/ 16 <24>;
+				width = /bits/ 16 <66>;
+				height = /bits/ 16 <109>;
+			};
+
+			win3 {
+				xres = /bits/ 16 <480>;
+				yres = /bits/ 16 <800>;
+				virtual_x = /bits/ 16 <480>;
+				virtual_y = /bits/ 16 <800>;
+				max_bpp	 = /bits/ 16 <32>;
+				default_bpp	= /bits/ 16 <24>;
+				width = /bits/ 16 <66>;
+				height = /bits/ 16 <109>;
+			};
+
+			win4 {
+				xres = /bits/ 16 <480>;
+				yres = /bits/ 16 <800>;
+				virtual_x = /bits/ 16 <480>;
+				virtual_y = /bits/ 16 <800>;
+				max_bpp	 = /bits/ 16 <32>;
+				default_bpp	= /bits/ 16 <24>;
+				width = /bits/ 16 <66>;
+				height = /bits/ 16 <109>;
+			};
+		};
+		
+	};
+
+	
+};
+
+&rtc {
+	status = "okay";
+};
+
+&exynos_usbphy {
+	status = "okay";
+};
+
+&hsotg {
+	status = "okay";
+};
+
+&ehci {
+		status = "okay";
+		
+		port@0 {
+		    status = "okay";
+		};
+		
+		port@1 {
+		    status = "okay";
+		};
+		
+		port@2 {
+		    status = "okay";
+		};
+};
+
+&ohci {
+		status = "okay";
+		port@0 {
+		    status = "okay";
+		};
+};
+
+
+&sdhci_2 {
+	bus-width = <4>;
+	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
+	pinctrl-names = "default";
+	status = "disabled";
+};
+
+&pwm {
+      pinctrl-0 = <&pwm0_out &pwm1_out>;
+      pinctrl-names = "default";
+      samsung,pwm-outputs = <0>, <1>;
+      status = "disabled";
+ };
+  
+
+&serial_0 {
+	status = "okay";
+};
+
+&serial_1 {
+	status = "okay";
+};
+
+&serial_2 {
+	status = "okay";
+};
+
+&serial_3 {
+	status = "okay";
+};
