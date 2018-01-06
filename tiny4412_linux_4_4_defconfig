@@ -468,7 +468,7 @@ CONFIG_VMSPLIT_3G=y
 # CONFIG_VMSPLIT_2G is not set
 # CONFIG_VMSPLIT_1G is not set
 CONFIG_PAGE_OFFSET=0xC0000000
-CONFIG_NR_CPUS=4
+CONFIG_NR_CPUS=8
 CONFIG_HOTPLUG_CPU=y
 # CONFIG_ARM_PSCI is not set
 CONFIG_ARCH_NR_GPIO=512
@@ -1452,7 +1452,7 @@ CONFIG_THERMAL_GOV_STEP_WISE=y
 # CONFIG_THERMAL_GOV_BANG_BANG is not set
 # CONFIG_THERMAL_GOV_USER_SPACE is not set
 # CONFIG_THERMAL_GOV_POWER_ALLOCATOR is not set
-CONFIG_THERMAL_EMULATION=y
+# CONFIG_THERMAL_EMULATION is not set
 
 #
 # Texas Instruments thermal drivers
@@ -1463,29 +1463,7 @@ CONFIG_THERMAL_EMULATION=y
 # Samsung thermal drivers
 #
 CONFIG_EXYNOS_THERMAL=y
-CONFIG_WATCHDOG=y
-CONFIG_WATCHDOG_CORE=y
-# CONFIG_WATCHDOG_NOWAYOUT is not set
-
-#
-# Watchdog Device Drivers
-#
-# CONFIG_SOFT_WATCHDOG is not set
-# CONFIG_GPIO_WATCHDOG is not set
-# CONFIG_XILINX_WATCHDOG is not set
-# CONFIG_ARM_SP805_WATCHDOG is not set
-# CONFIG_CADENCE_WATCHDOG is not set
-CONFIG_HAVE_S3C2410_WATCHDOG=y
-CONFIG_S3C2410_WATCHDOG=y
-# CONFIG_DW_WATCHDOG is not set
-# CONFIG_MAX63XX_WATCHDOG is not set
-# CONFIG_BCM7038_WDT is not set
-# CONFIG_MEN_A21_WDT is not set
-
-#
-# USB-based Watchdog Cards
-#
-# CONFIG_USBPCWATCHDOG is not set
+# CONFIG_WATCHDOG is not set
 CONFIG_SSB_POSSIBLE=y
 
 #
@@ -1743,43 +1721,16 @@ CONFIG_FB_S3C=y
 # CONFIG_FB_BROADSHEET is not set
 # CONFIG_FB_AUO_K190X is not set
 # CONFIG_FB_SIMPLE is not set
-CONFIG_EXYNOS_VIDEO=y
-CONFIG_EXYNOS_MIPI_DSI=y
-# CONFIG_EXYNOS_LCD_S6E8AX0 is not set
+# CONFIG_EXYNOS_VIDEO is not set
 # CONFIG_FB_SSD1307 is not set
-CONFIG_BACKLIGHT_LCD_SUPPORT=y
-CONFIG_LCD_CLASS_DEVICE=y
-# CONFIG_LCD_L4F00242T03 is not set
-# CONFIG_LCD_LMS283GF05 is not set
-# CONFIG_LCD_LTV350QV is not set
-# CONFIG_LCD_ILI922X is not set
-# CONFIG_LCD_ILI9320 is not set
-# CONFIG_LCD_TDO24M is not set
-# CONFIG_LCD_VGG2432A4 is not set
-CONFIG_LCD_PLATFORM=y
-# CONFIG_LCD_S6E63M0 is not set
-# CONFIG_LCD_LD9040 is not set
-# CONFIG_LCD_AMS369FG06 is not set
-# CONFIG_LCD_LMS501KF03 is not set
-# CONFIG_LCD_HX8357 is not set
-CONFIG_BACKLIGHT_CLASS_DEVICE=y
-CONFIG_BACKLIGHT_GENERIC=y
-# CONFIG_BACKLIGHT_PM8941_WLED is not set
-# CONFIG_BACKLIGHT_ADP8860 is not set
-# CONFIG_BACKLIGHT_ADP8870 is not set
-# CONFIG_BACKLIGHT_LM3639 is not set
-# CONFIG_BACKLIGHT_GPIO is not set
-# CONFIG_BACKLIGHT_LV5207LP is not set
-# CONFIG_BACKLIGHT_BD6107 is not set
+# CONFIG_BACKLIGHT_LCD_SUPPORT is not set
 # CONFIG_VGASTATE is not set
 
 #
 # Console display driver support
 #
 CONFIG_DUMMY_CONSOLE=y
-CONFIG_FRAMEBUFFER_CONSOLE=y
-CONFIG_FRAMEBUFFER_CONSOLE_DETECT_PRIMARY=y
-# CONFIG_FRAMEBUFFER_CONSOLE_ROTATION is not set
+# CONFIG_FRAMEBUFFER_CONSOLE is not set
 CONFIG_LOGO=y
 CONFIG_LOGO_LINUX_MONO=y
 CONFIG_LOGO_LINUX_VGA16=y
@@ -2096,13 +2047,11 @@ CONFIG_USB_OHCI_EXYNOS=y
 # CONFIG_USB_MUSB_HDRC is not set
 # CONFIG_USB_DWC3 is not set
 CONFIG_USB_DWC2=y
-# CONFIG_USB_DWC2_HOST is not set
+CONFIG_USB_DWC2_HOST=y
 
 #
 # Gadget/Dual-role mode requires USB Gadget support to be enabled
 #
-# CONFIG_USB_DWC2_PERIPHERAL is not set
-CONFIG_USB_DWC2_DUAL_ROLE=y
 # CONFIG_USB_DWC2_DEBUG is not set
 # CONFIG_USB_DWC2_TRACK_MISSED_SOFS is not set
 # CONFIG_USB_CHIPIDEA is not set
@@ -2152,52 +2101,7 @@ CONFIG_USB_HSIC_USB4604=y
 # CONFIG_USB_GPIO_VBUS is not set
 # CONFIG_USB_ISP1301 is not set
 # CONFIG_USB_ULPI is not set
-CONFIG_USB_GADGET=y
-# CONFIG_USB_GADGET_DEBUG is not set
-# CONFIG_USB_GADGET_DEBUG_FILES is not set
-# CONFIG_USB_GADGET_DEBUG_FS is not set
-CONFIG_USB_GADGET_VBUS_DRAW=2
-CONFIG_USB_GADGET_STORAGE_NUM_BUFFERS=2
-
-#
-# USB Peripheral Controller
-#
-# CONFIG_USB_FUSB300 is not set
-# CONFIG_USB_FOTG210_UDC is not set
-# CONFIG_USB_GR_UDC is not set
-# CONFIG_USB_R8A66597 is not set
-# CONFIG_USB_PXA27X is not set
-# CONFIG_USB_MV_UDC is not set
-# CONFIG_USB_MV_U3D is not set
-# CONFIG_USB_M66592 is not set
-# CONFIG_USB_BDC_UDC is not set
-# CONFIG_USB_NET2272 is not set
-# CONFIG_USB_GADGET_XILINX is not set
-# CONFIG_USB_DUMMY_HCD is not set
-CONFIG_USB_LIBCOMPOSITE=y
-CONFIG_USB_U_ETHER=y
-CONFIG_USB_F_ECM=y
-CONFIG_USB_F_SUBSET=y
-CONFIG_USB_F_RNDIS=y
-# CONFIG_USB_CONFIGFS is not set
-# CONFIG_USB_ZERO is not set
-# CONFIG_USB_AUDIO is not set
-CONFIG_USB_ETH=y
-CONFIG_USB_ETH_RNDIS=y
-# CONFIG_USB_ETH_EEM is not set
-# CONFIG_USB_G_NCM is not set
-# CONFIG_USB_GADGETFS is not set
-# CONFIG_USB_FUNCTIONFS is not set
-# CONFIG_USB_MASS_STORAGE is not set
-# CONFIG_USB_G_SERIAL is not set
-# CONFIG_USB_MIDI_GADGET is not set
-# CONFIG_USB_G_PRINTER is not set
-# CONFIG_USB_CDC_COMPOSITE is not set
-# CONFIG_USB_G_ACM_MS is not set
-# CONFIG_USB_G_MULTI is not set
-# CONFIG_USB_G_HID is not set
-# CONFIG_USB_G_DBGP is not set
-# CONFIG_USB_G_WEBCAM is not set
+# CONFIG_USB_GADGET is not set
 # CONFIG_USB_LED_TRIG is not set
 # CONFIG_UWB is not set
 CONFIG_MMC=y
@@ -2477,212 +2381,12 @@ CONFIG_EXTCON=y
 #
 # Extcon Device Drivers
 #
-# CONFIG_EXTCON_ADC_JACK is not set
 # CONFIG_EXTCON_GPIO is not set
 # CONFIG_EXTCON_RT8973A is not set
 # CONFIG_EXTCON_SM5502 is not set
 # CONFIG_EXTCON_USB_GPIO is not set
 # CONFIG_MEMORY is not set
-CONFIG_IIO=y
-# CONFIG_IIO_BUFFER is not set
-# CONFIG_IIO_TRIGGER is not set
-
-#
-# Accelerometers
-#
-# CONFIG_BMA180 is not set
-# CONFIG_BMC150_ACCEL is not set
-# CONFIG_IIO_ST_ACCEL_3AXIS is not set
-# CONFIG_KXSD9 is not set
-# CONFIG_KXCJK1013 is not set
-# CONFIG_MMA8452 is not set
-# CONFIG_MMA9551 is not set
-# CONFIG_MMA9553 is not set
-# CONFIG_MXC4005 is not set
-# CONFIG_STK8312 is not set
-
-#
-# Analog to digital converters
-#
-# CONFIG_AD7266 is not set
-# CONFIG_AD7291 is not set
-# CONFIG_AD7298 is not set
-# CONFIG_AD7476 is not set
-# CONFIG_AD7791 is not set
-# CONFIG_AD7793 is not set
-# CONFIG_AD7887 is not set
-# CONFIG_AD7923 is not set
-# CONFIG_AD799X is not set
-CONFIG_EXYNOS_ADC=y
-# CONFIG_HI8435 is not set
-# CONFIG_MAX1027 is not set
-# CONFIG_MAX1363 is not set
-# CONFIG_MCP320X is not set
-# CONFIG_MCP3422 is not set
-# CONFIG_NAU7802 is not set
-# CONFIG_TI_ADC081C is not set
-# CONFIG_TI_ADC128S052 is not set
-# CONFIG_VF610_ADC is not set
-
-#
-# Amplifiers
-#
-# CONFIG_AD8366 is not set
-
-#
-# Chemical Sensors
-#
-# CONFIG_VZ89X is not set
-
-#
-# Hid Sensor IIO Common
-#
-
-#
-# SSP Sensor Common
-#
-# CONFIG_IIO_SSP_SENSORHUB is not set
-
-#
-# Digital to analog converters
-#
-# CONFIG_AD5064 is not set
-# CONFIG_AD5360 is not set
-# CONFIG_AD5380 is not set
-# CONFIG_AD5421 is not set
-# CONFIG_AD5446 is not set
-# CONFIG_AD5449 is not set
-# CONFIG_AD5504 is not set
-# CONFIG_AD5624R_SPI is not set
-# CONFIG_AD5686 is not set
-# CONFIG_AD5755 is not set
-# CONFIG_AD5764 is not set
-# CONFIG_AD5791 is not set
-# CONFIG_AD7303 is not set
-# CONFIG_M62332 is not set
-# CONFIG_MAX517 is not set
-# CONFIG_MAX5821 is not set
-# CONFIG_MCP4725 is not set
-# CONFIG_MCP4922 is not set
-
-#
-# Frequency Synthesizers DDS/PLL
-#
-
-#
-# Clock Generator/Distribution
-#
-# CONFIG_AD9523 is not set
-
-#
-# Phase-Locked Loop (PLL) frequency synthesizers
-#
-# CONFIG_ADF4350 is not set
-
-#
-# Digital gyroscope sensors
-#
-# CONFIG_ADIS16080 is not set
-# CONFIG_ADIS16130 is not set
-# CONFIG_ADIS16136 is not set
-# CONFIG_ADIS16260 is not set
-# CONFIG_ADXRS450 is not set
-# CONFIG_BMG160 is not set
-# CONFIG_IIO_ST_GYRO_3AXIS is not set
-# CONFIG_ITG3200 is not set
-
-#
-# Humidity sensors
-#
-# CONFIG_DHT11 is not set
-# CONFIG_HDC100X is not set
-# CONFIG_HTU21 is not set
-# CONFIG_SI7005 is not set
-# CONFIG_SI7020 is not set
-
-#
-# Inertial measurement units
-#
-# CONFIG_ADIS16400 is not set
-# CONFIG_ADIS16480 is not set
-# CONFIG_KMX61 is not set
-# CONFIG_INV_MPU6050_IIO is not set
-
-#
-# Light sensors
-#
-# CONFIG_ADJD_S311 is not set
-# CONFIG_AL3320A is not set
-# CONFIG_APDS9300 is not set
-# CONFIG_APDS9960 is not set
-# CONFIG_BH1750 is not set
-# CONFIG_CM32181 is not set
-# CONFIG_CM3232 is not set
-# CONFIG_CM3323 is not set
-# CONFIG_CM36651 is not set
-# CONFIG_GP2AP020A00F is not set
-# CONFIG_ISL29125 is not set
-# CONFIG_JSA1212 is not set
-# CONFIG_RPR0521 is not set
-# CONFIG_LTR501 is not set
-# CONFIG_OPT3001 is not set
-# CONFIG_PA12203001 is not set
-# CONFIG_STK3310 is not set
-# CONFIG_TCS3414 is not set
-# CONFIG_TCS3472 is not set
-# CONFIG_SENSORS_TSL2563 is not set
-# CONFIG_TSL4531 is not set
-# CONFIG_US5182D is not set
-# CONFIG_VCNL4000 is not set
-
-#
-# Magnetometer sensors
-#
-# CONFIG_AK8975 is not set
-# CONFIG_AK09911 is not set
-# CONFIG_BMC150_MAGN is not set
-# CONFIG_MAG3110 is not set
-# CONFIG_MMC35240 is not set
-# CONFIG_IIO_ST_MAGN_3AXIS is not set
-
-#
-# Inclinometer sensors
-#
-
-#
-# Digital potentiometers
-#
-# CONFIG_MCP4531 is not set
-
-#
-# Pressure sensors
-#
-# CONFIG_BMP280 is not set
-# CONFIG_MPL115 is not set
-# CONFIG_MPL3115 is not set
-# CONFIG_MS5611 is not set
-# CONFIG_MS5637 is not set
-# CONFIG_IIO_ST_PRESS is not set
-# CONFIG_T5403 is not set
-
-#
-# Lightning sensors
-#
-# CONFIG_AS3935 is not set
-
-#
-# Proximity sensors
-#
-# CONFIG_LIDAR_LITE_V2 is not set
-# CONFIG_SX9500 is not set
-
-#
-# Temperature sensors
-#
-# CONFIG_MLX90614 is not set
-# CONFIG_TMP006 is not set
-# CONFIG_TSYS01 is not set
-# CONFIG_TSYS02D is not set
+# CONFIG_IIO is not set
 # CONFIG_PWM is not set
 CONFIG_IRQCHIP=y
 CONFIG_ARM_GIC=y
@@ -2751,7 +2455,6 @@ CONFIG_JBD2=y
 CONFIG_FS_MBCACHE=y
 # CONFIG_REISERFS_FS is not set
 # CONFIG_JFS_FS is not set
-# CONFIG_OCFS2_FS is not set
 # CONFIG_BTRFS_FS is not set
 # CONFIG_NILFS2_FS is not set
 # CONFIG_F2FS_FS is not set
@@ -2802,7 +2505,7 @@ CONFIG_TMPFS=y
 CONFIG_TMPFS_POSIX_ACL=y
 CONFIG_TMPFS_XATTR=y
 # CONFIG_HUGETLB_PAGE is not set
-CONFIG_CONFIGFS_FS=y
+# CONFIG_CONFIGFS_FS is not set
 CONFIG_MISC_FILESYSTEMS=y
 # CONFIG_ADFS_FS is not set
 # CONFIG_AFFS_FS is not set
@@ -2897,7 +2600,6 @@ CONFIG_NLS_ISO8859_1=y
 # CONFIG_NLS_MAC_ROMANIAN is not set
 # CONFIG_NLS_MAC_TURKISH is not set
 # CONFIG_NLS_UTF8 is not set
-# CONFIG_DLM is not set
 
 #
 # Kernel hacking
@@ -3264,19 +2966,6 @@ CONFIG_ARCH_HAS_ATOMIC64_DEC_IF_POSITIVE=y
 # CONFIG_CORDIC is not set
 # CONFIG_DDR is not set
 CONFIG_LIBFDT=y
-CONFIG_FONT_SUPPORT=y
-CONFIG_FONTS=y
-# CONFIG_FONT_8x8 is not set
-# CONFIG_FONT_8x16 is not set
-# CONFIG_FONT_6x11 is not set
-CONFIG_FONT_7x14=y
-# CONFIG_FONT_PEARL_8x8 is not set
-# CONFIG_FONT_ACORN_8x8 is not set
-# CONFIG_FONT_MINI_4x6 is not set
-# CONFIG_FONT_6x10 is not set
-# CONFIG_FONT_SUN8x16 is not set
-# CONFIG_FONT_SUN12x22 is not set
-# CONFIG_FONT_10x18 is not set
 # CONFIG_SG_SPLIT is not set
 CONFIG_ARCH_HAS_SG_CHAIN=y
 # CONFIG_VIRTUALIZATION is not set

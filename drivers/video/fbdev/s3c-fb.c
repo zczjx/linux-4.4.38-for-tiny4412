@@ -1422,7 +1422,7 @@ static void s3c_fb_clear_win(struct s3c_fb *sfb, int win)
 	}
 }
 
-static void __init tiny4412_fb_init_pdata(char *lcd_name, struct s3c_fb_platdata *pd) {
+static void tiny4412_fb_init_pdata(const char *lcd_name, struct s3c_fb_platdata *pd) {
 	struct s3cfb_lcd *lcd = NULL;
 	struct s3c_fb_pd_win *win;
 	struct fb_videomode *mode = pd->vtiming;
@@ -1508,10 +1508,10 @@ static int s3c_fb_probe(struct platform_device *pdev)
 	struct s3c_fb *sfb;
 	struct s3c_fb_win *fbwin;
 	struct resource *res;
-	char *lcd_name = NULL;
+	const char *lcd_name = NULL;
 	int win;
 	int ret = 0;
-	u32 reg;
+	u32 reg, clk_rate = 0;
 
 	of_id = of_match_device(s3c_fb_of_match, &pdev->dev);
 	if(NULL != of_id){
@@ -1573,7 +1573,8 @@ static int s3c_fb_probe(struct platform_device *pdev)
 			ret = PTR_ERR(sfb->lcd_clk);
 			goto err_bus_clk;
 		}
-		clk_set_rate(sfb->lcd_clk, 800000000);
+		of_property_read_u32(fimd_root_dn, "sclk-fimd-rate", &clk_rate);
+		clk_set_rate(sfb->lcd_clk, clk_rate);
 		clk_prepare_enable(sfb->lcd_clk);
 	}
 

@@ -144,7 +144,7 @@
 
 &fimd {
 	compatible = "samsung,exynos4-fb";
-	sclk_fimd-rate = <800000000>;
+	sclk-fimd-rate = <800000000>;
 	pinctrl-0 = <&lcd_clk &lcd_data24>;
 	pinctrl-names = "lcd0_pin_cfg";
 	sysreg_lcd_blk_cfg_offset = /bits/ 32 <0x0210>;
