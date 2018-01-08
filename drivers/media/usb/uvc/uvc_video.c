@@ -1696,7 +1696,6 @@ static int uvc_init_video(struct uvc_streaming *stream, gfp_t gfp_flags)
 				altsetting = alts->desc.bAlternateSetting;
 				best_psize = psize;
 				best_ep = ep;
-				printk(KERN_WARNING"best_ep bandwidth %d \n", bandwidth);
 			}
 		}
 
