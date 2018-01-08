@@ -969,7 +969,7 @@ static void uvc_video_stats_stop(struct uvc_streaming *stream)
 static int uvc_video_decode_start(struct uvc_streaming *stream,
 		struct uvc_buffer *buf, const __u8 *data, int len)
 {
-	__u8 fid;
+	static __u8 fid;
 
 	/* Sanity checks:
 	 * - packet must be at least 2 bytes long
@@ -981,7 +981,25 @@ static int uvc_video_decode_start(struct uvc_streaming *stream,
 		return -EINVAL;
 	}
 
-	fid = data[1] & UVC_STREAM_FID;
+	if (stream->dev->udev->descriptor.idVendor == 0x1B3B) 
+	{
+		if (len >= 16) // have data in buffer
+		{
+			if ((data[12]==0xFF && data[13]==0xD8 && data[14]==0xFF) 
+			|| (data[12]==0xD8 && data[13]==0xFF && data[14]==0xC4))
+			{
+				if(stream->last_fid)
+					fid &= ~UVC_STREAM_FID;
+				else
+					fid |= UVC_STREAM_FID;
+			}
+		
+		}
+	}
+	else
+	{
+		fid = data[1] & UVC_STREAM_FID;
+	}
 
 	/* Increase the sequence number regardless of any buffer states, so
 	 * that discontinuous sequence numbers always indicate lost frames.
@@ -1074,6 +1092,9 @@ static void uvc_video_decode_data(struct uvc_streaming *stream,
 {
 	unsigned int maxlen, nbytes;
 	void *mem;
+	unsigned char *point_mem;
+	static unsigned char *mem_temp = NULL;
+	static unsigned int nArrayTemp_Size = 1000;
 
 	if (len <= 0)
 		return;
@@ -1084,6 +1105,25 @@ static void uvc_video_decode_data(struct uvc_streaming *stream,
 	nbytes = min((unsigned int)len, maxlen);
 	memcpy(mem, data, nbytes);
 	buf->bytesused += nbytes;
+
+	if(mem_temp == NULL)
+	{
+		mem_temp = kmalloc(nArrayTemp_Size, GFP_KERNEL);
+	}
+	else if(nArrayTemp_Size <= nbytes)
+	{ 
+		kfree(mem_temp);
+		nArrayTemp_Size += 500;
+		mem_temp = kmalloc(nArrayTemp_Size, GFP_KERNEL);
+	}
+	memset(mem_temp, 0x00, nArrayTemp_Size);
+	point_mem = (unsigned char *)mem;
+	if( *(point_mem) == 0xD8 && *(point_mem + 1) == 0xFF && *(point_mem + 2) == 0xC4)
+	{
+		memcpy(mem_temp + 1, point_mem, nbytes);
+		mem_temp[0] = 0xFF;
+		memcpy(point_mem, mem_temp, nbytes + 1);
+	}
 
 	/* Complete the current frame if the buffer size was exceeded. */
 	if (len > maxlen) {
@@ -1622,7 +1662,14 @@ static int uvc_init_video(struct uvc_streaming *stream, gfp_t gfp_flags)
 		int intfnum = stream->intfnum;
 
 		/* Isochronous endpoint, select the alternate setting. */
-		bandwidth = stream->ctrl.dwMaxPayloadTransferSize;
+		if (stream->dev->udev->descriptor.idVendor == 0x1B3B)
+		{
+			bandwidth = 512;
+		}
+		else
+		{
+			bandwidth = stream->ctrl.dwMaxPayloadTransferSize;
+		}
 
 		if (bandwidth == 0) {
 			uvc_trace(UVC_TRACE_VIDEO, "Device requested null "
@@ -1649,6 +1696,7 @@ static int uvc_init_video(struct uvc_streaming *stream, gfp_t gfp_flags)
 				altsetting = alts->desc.bAlternateSetting;
 				best_psize = psize;
 				best_ep = ep;
+				printk(KERN_WARNING"best_ep bandwidth %d \n", bandwidth);
 			}
 		}
 
