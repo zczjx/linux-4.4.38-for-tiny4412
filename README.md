@@ -17,7 +17,7 @@ linux-4.4.38-for-tiny4412 made by FriendlyARM Corp.
     
     2. cp tiny4412_linux_4_4_defconfig .config
 
-    3. make  uImage
+    3. make LOADADDR=0x40008000 uImage
 
     4. make dtbs
 
