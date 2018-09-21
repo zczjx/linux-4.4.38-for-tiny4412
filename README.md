@@ -30,7 +30,7 @@ linux-4.4.38-for-tiny4412 made by FriendlyARM Corp.
 
     - use uboot fastboot run fastboot in uboot
 
-    - fastboot flash kernel arch/arm/boot/uImage
+    - fastboot flash kernel-4-4 arch/arm/boot/uImage
 
     - fastboot flash dtb arch/arm/boot/dts/exynos4412-tiny4412.dtb
 
