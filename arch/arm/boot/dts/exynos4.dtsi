@@ -270,7 +270,7 @@
 	};
 
 	rtc: rtc@10070000 {
-		compatible = "samsung,s3c6410-rtc";
+		compatible = "samsung,exynos4-rtc";
 		reg = <0x10070000 0x100>;
 		interrupt-parent = <&pmu_system_controller>;
 		interrupts = <0 44 0>, <0 45 0>;
