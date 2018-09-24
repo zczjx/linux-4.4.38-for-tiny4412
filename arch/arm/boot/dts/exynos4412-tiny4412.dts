@@ -243,6 +243,11 @@
 	status = "okay";
 };
 
+&watchdog {
+	status = "okay";
+};
+
+
 &exynos_usbphy {
 	status = "okay";
 };
