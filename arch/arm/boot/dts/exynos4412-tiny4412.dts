@@ -147,12 +147,12 @@
 		reg = <0x38>;
 		interrupt-parent = <&gpx1>;
 		interrupts = <6 2>;
-        touchscreen-size-x = <800>;
-        touchscreen-size-y = <480>;
-        touchscreen-fuzz-x = <4>;
-        touchscreen-fuzz-y = <7>;
-        touchscreen-fuzz-pressure = <2>;
-        touchscreen-max-pressure = <2048>;
+		touchscreen-size-x =800>;
+		touchscreen-size-y = <480>;
+		touchscreen-fuzz-x = <4>;
+		touchscreen-fuzz-y = <7>;
+		touchscreen-fuzz-pressure = <2>;
+		touchscreen-max-pressure = <2048>;
 		status = "okay";
 	};
 };
