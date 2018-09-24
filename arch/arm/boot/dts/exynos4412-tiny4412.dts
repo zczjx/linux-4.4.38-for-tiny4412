@@ -137,6 +137,26 @@
 	};
 };
 
+&i2c_1 {
+	samsung,i2c-sda-delay = <100>;
+	samsung,i2c-max-bus-freq = <200000>;
+	status = "okay";
+
+	ft5406: touchscreen@38 {
+		compatible = "edt,edt-ft5406";
+		reg = <0x38>;
+		interrupt-parent = <&gpx1>;
+		interrupts = <6 2>;
+        touchscreen-size-x = <800>;
+        touchscreen-size-y = <480>;
+        touchscreen-fuzz-x = <4>;
+        touchscreen-fuzz-y = <7>;
+        touchscreen-fuzz-pressure = <2>;
+        touchscreen-max-pressure = <2048>;
+		status = "okay";
+	};
+};
+
 &mshc_0 {
 	num-slots = <1>;
 	broken-cd;
