@@ -259,6 +259,10 @@
 	
 };
 
+&adc {
+	status = "okay";
+};
+
 &rtc {
 	status = "okay";
 };
