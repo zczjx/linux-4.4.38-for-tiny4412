@@ -30,6 +30,21 @@
 		reg = <0x40000000 0x40000000>;
 	};
 
+	thermal-zones {
+		cpu_thermal: cpu-thermal {
+			cooling-maps {
+				map0 {
+				     /* Corresponds to 800MHz at freq_table */
+				     cooling-device = <&cpu0 7 7>;
+				};
+				map1 {
+				     /* Corresponds to 200MHz at freq_table */
+				     cooling-device = <&cpu0 13 13>;
+			       };
+		       };
+		};
+	};
+
 	leds {
 		compatible = "gpio-leds";
 
@@ -123,6 +138,7 @@
 	};
 	
 };
+
 
 &i2c_0 {
 	samsung,i2c-sda-delay = <100>;
@@ -257,6 +273,10 @@
 	};
 
 	
+};
+
+&tmu {
+	status = "okay";
 };
 
 &adc {
