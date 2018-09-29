@@ -173,6 +173,24 @@
 	};
 };
 
+&i2c_3 {
+	samsung,i2c-sda-delay = <100>;
+	samsung,i2c-max-bus-freq = <200000>;
+	status = "okay";
+
+	mma7660: mma7660@4c {
+		compatible = "fsl,mma7660";
+		reg = <0x4c>;
+		interrupt-parent = <&gpx3>;
+		interrupts = <1 2>;
+		poll_interval = <100>;
+		input_fuzz = <4>;
+		input_flat = <4>;
+		status = "okay";
+	};
+};
+
+
 &mshc_0 {
 	num-slots = <1>;
 	broken-cd;
