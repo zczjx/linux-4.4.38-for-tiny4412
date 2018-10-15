@@ -14,6 +14,7 @@
 /dts-v1/;
 #include "exynos4412.dtsi"
 #include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/interrupt-controller/irq.h>
 #include <dt-bindings/usb4604/usb4604.h>
 #include <dt-bindings/tiny4412-lcds/samsung_fimd.h>
 
@@ -91,6 +92,7 @@
 		compatible = "tiny4412_ts_backlight";
 		status = "okay";
 	};
+	
 	tiny4412_1wire {
 		compatible = "tiny4412_1wire";
 		reg = <0x139D0000 0x1000>;
@@ -105,6 +107,16 @@
 		compatible = "smsc,usb4604";
 		reset-gpios = <&gpm2 4 GPIO_ACTIVE_LOW>;
 		initial-mode = <USB4604_MODE_HUB>;
+	};
+
+	hc-sr04 {
+		compatible = "hc-sr04";
+		interrupt-parent = <&gpx1>;
+		interrupt-names = "echo";
+		interrupts = <7 IRQ_TYPE_EDGE_RISING>;
+		trigger-gpio = <&gpx1 0 GPIO_ACTIVE_LOW>;
+		echo-gpio = <&gpx1 7 GPIO_ACTIVE_LOW>;
+		status = "okay";
 	};
 
 	tiny4412_lcd {
@@ -139,7 +151,6 @@
 	
 };
 
-
 &i2c_0 {
 	samsung,i2c-sda-delay = <100>;
 	samsung,i2c-max-bus-freq = <400000>;
@@ -162,7 +173,7 @@
 		compatible = "edt,edt-ft5406";
 		reg = <0x38>;
 		interrupt-parent = <&gpx1>;
-		interrupts = <6 2>;
+		interrupts = <6 IRQ_TYPE_EDGE_FALLING>;
 		touchscreen-size-x = <800>;
 		touchscreen-size-y = <480>;
 		touchscreen-fuzz-x = <4>;
@@ -182,7 +193,7 @@
 		compatible = "fsl,mma7660";
 		reg = <0x4c>;
 		interrupt-parent = <&gpx3>;
-		interrupts = <1 2>;
+		interrupts = <1 IRQ_TYPE_EDGE_FALLING>;
 		poll_interval = <100>;
 		input_fuzz = <4>;
 		input_flat = <4>;

@@ -382,6 +382,12 @@ config HMC6352
 	  This driver provides support for the Honeywell HMC6352 compass,
 	  providing configuration and heading data via sysfs.
 
+config HC_SR04
+	tristate "HC-SR04 Ultrasonic Distance Measurement Device"
+	help
+	  This driver provides support for the hc-sr04 Ultrasonic Distance
+	  Measurement Device.
+
 config DS1682
 	tristate "Dallas DS1682 Total Elapsed Time Recorder with Alarm"
 	depends on I2C
