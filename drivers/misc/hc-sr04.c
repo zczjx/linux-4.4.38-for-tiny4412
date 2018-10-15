@@ -28,6 +28,7 @@
 #include <linux/delay.h>
 #include <linux/time.h>
 #include <linux/wait.h>
+#include <linux/atomic.h>
 #include <asm/uaccess.h>
 
 #define HC_DEV_NAME "hc-sr04"
@@ -41,7 +42,7 @@ typedef struct ultrasonic_dev {
 	unsigned long  tigger_cycle;
 	unsigned long time_gap_us;
 	wait_queue_head_t wq;
-	int data_update_flag;
+	atomic_t data_update_flag;
 } ultrasonic_dev;
 
 static struct ultrasonic_dev hc_sr04_dev;
@@ -77,7 +78,7 @@ static int hc_sr04_release(struct inode *inode, struct file *filp)
 {
 	int ret = 0;
 
-	hc_sr04_dev.data_update_flag = 1;
+	atomic_set(&hc_sr04_dev.data_update_flag, 1);
 	wake_up_all(&hc_sr04_dev.wq);
 	gpio_set_value(hc_sr04_dev.trigger_gpio, 0);
 	gpio_set_value(hc_sr04_dev.echo_gpio, 0);
@@ -94,9 +95,9 @@ static long hc_sr04_ioctl(struct file *file, unsigned int cmd,
 	switch(cmd)
 	{
 		case IOC_GET_US_TIME_GAP:
-			hc_sr04_dev.data_update_flag = 0;
+			atomic_set(&hc_sr04_dev.data_update_flag, 0);
 			ret = wait_event_interruptible(hc_sr04_dev.wq,
-					hc_sr04_dev.data_update_flag);
+						atomic_read(&hc_sr04_dev.data_update_flag));
 		
 			if (ret < 0) {
 				ret = -EHOSTUNREACH;
@@ -134,7 +135,7 @@ static irqreturn_t hc_sr04_isr(int irq, void *dev_id)
 	do_gettimeofday(&tv);
 	cur_us = tv.tv_sec * 1000 + tv.tv_usec;
 	hc_sr04_dev.time_gap_us = cur_us - pre_us;
-	hc_sr04_dev.data_update_flag = 1;
+	atomic_set(&hc_sr04_dev.data_update_flag, 1);
 	wake_up_all(&hc_sr04_dev.wq);
 	return IRQ_HANDLED;
 }
@@ -238,7 +239,7 @@ static int hc_sr04_probe(struct platform_device *pdev)
 	}
 	
 	init_waitqueue_head(&hc_sr04_dev.wq);
-	hc_sr04_dev.data_update_flag = 0;
+	atomic_set(&hc_sr04_dev.data_update_flag, 0);
 	
 	hc_sr04_dev.irq_no = platform_get_irq_byname(pdev, "echo");
 
