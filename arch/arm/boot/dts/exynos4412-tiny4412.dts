@@ -96,11 +96,11 @@
 	tiny4412_1wire {
 		compatible = "tiny4412_1wire";
 		reg = <0x139D0000 0x1000>;
-		status = "okay";
 		1wire-gpio = <&gpx1 2 GPIO_ACTIVE_LOW>;
 		interrupts = <0 40 0>;
 		clocks = <&clock CLK_PWM>;
 		clock-names = "timer-3";
+		status = "disabled";
 	};
 	
  	usb-hub {
@@ -117,6 +117,13 @@
 		trigger-gpio = <&gpx1 0 GPIO_ACTIVE_LOW>;
 		echo-gpio = <&gpx1 7 GPIO_ACTIVE_LOW>;
 		status = "okay";
+	};
+
+	pwm-buzzer {
+		compatible = "pwm-buzzer";
+		pwms = <&pwm 0 10000 0>;
+		pwm-names = "buzzer-pwm";
+		status = "disabled";
 	};
 
 	tiny4412_lcd {

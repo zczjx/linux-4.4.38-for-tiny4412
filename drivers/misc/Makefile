@@ -38,6 +38,7 @@ obj-$(CONFIG_TI_DAC7512)	+= ti_dac7512.o
 obj-$(CONFIG_C2PORT)		+= c2port/
 obj-$(CONFIG_HMC6352)		+= hmc6352.o
 obj-$(CONFIG_HC_SR04)		+= hc-sr04.o
+obj-$(CONFIG_PWM_BUZZER)	+= pwm_buzzer.o
 obj-y				+= eeprom/
 obj-y				+= cb710/
 obj-$(CONFIG_SPEAR13XX_PCIE_GADGET)	+= spear13xx_pcie_gadget.o

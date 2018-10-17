@@ -388,6 +388,11 @@ config HC_SR04
 	  This driver provides support for the hc-sr04 Ultrasonic Distance
 	  Measurement Device.
 
+config PWM_BUZZER
+	tristate "pwm buzzer device driver"
+	help
+		pwm buzzer device driver
+
 config DS1682
 	tristate "Dallas DS1682 Total Elapsed Time Recorder with Alarm"
 	depends on I2C

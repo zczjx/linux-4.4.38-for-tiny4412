@@ -638,7 +638,7 @@
 		compatible = "samsung,exynos4210-pwm";
 		reg = <0x139D0000 0x1000>;
 		interrupts = <0 37 0>, <0 38 0>, <0 39 0>, <0 40 0>, <0 41 0>;
-		/* clocks = <&clock CLK_PWM>; */
+		clocks = <&clock CLK_PWM>;
 		clock-names = "timers";
 		#pwm-cells = <3>;
 		status = "disabled";
