@@ -208,6 +208,22 @@
 	};
 };
 
+&spi_0 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&spi0_bus>;
+	cs-gpios = <&gpb 1 GPIO_ACTIVE_LOW>;
+	status = "okay";
+
+	nfc-mfrc522 {
+		compatible = "nxp,rc522-spi";
+		spi-max-frequency = <10000000>;
+		reset-gpio = <&gpx3 2 GPIO_ACTIVE_HIGH>;
+		reg = <0>;
+		controller-data {
+			samsung,spi-feedback-delay = <2>;
+		};
+	};
+};
 
 &mshc_0 {
 	num-slots = <1>;
