@@ -154,7 +154,7 @@ static int setup_gpios(struct device_node *np, struct device *dev)
 	
 	if (gpio_is_valid(hc_sr04_dev.trigger_gpio)) {
 		error = devm_gpio_request_one(dev, hc_sr04_dev.trigger_gpio,
-									gpio_flags, "trigger-gpio");
+									GPIOF_OUT_INIT_LOW, "trigger-gpio");
 		
 		if (error) {
 			dev_err(dev, "unable to request GPIO %d as reset pin (%d)\n",
