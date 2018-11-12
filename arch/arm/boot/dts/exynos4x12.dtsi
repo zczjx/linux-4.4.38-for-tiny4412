@@ -325,7 +325,7 @@
 	samsung,pix-limits = <4224 8192 1920 4224>;
 	samsung,mainscaler-ext;
 	samsung,isp-wb;
-	samsung,lcd-wb;
+	// samsung,lcd-wb;
 	samsung,cam-if;
 };
 

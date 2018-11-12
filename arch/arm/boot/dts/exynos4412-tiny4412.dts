@@ -126,6 +126,35 @@
 		status = "disabled";
 	};
 
+	camera: camera {
+		pinctrl-0 = <&cam_port_a_io &cam_port_a_clk_active>;
+		pinctrl-1 = <&cam_port_a_io &cam_port_a_clk_idle>;
+		pinctrl-names = "default", "idle";
+		status = "okay";
+		assigned-clocks = <&clock CLK_MOUT_CAM0>,
+				  <&clock CLK_MOUT_CAM1>;
+		assigned-clock-parents = <&clock CLK_XUSBXTI>,
+					 <&clock CLK_XUSBXTI>;
+
+		parallel-ports {
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			/* camera A input */
+			port@1 {
+				reg = <1>;
+				fimc2_ep: endpoint {
+					remote-endpoint = <&ov5640_dvp_ep>;
+					bus-width = <8>;
+					hsync-active = <1>;
+					vsync-active = <1>;
+					pclk-sample = <0>;
+				};
+			};
+		};
+
+	};
+
 	tiny4412_lcd {
 		status = "okay";
 
@@ -168,6 +197,27 @@
 		reg = <0x50>;
 		pagesize = <16>;
 		status = "okay";
+	};
+
+	ov5640: ov5640@3c {
+		compatible = "ovti,ov5640";
+		reg = <0x3c>;
+		powerdown-gpios = <&gpx1 3 GPIO_ACTIVE_HIGH>;
+		reset-gpios = <&gpm2 3 GPIO_ACTIVE_LOW>;
+		clock-frequency = <24000000>;
+		clocks = <&camera 0>;
+		clock-names = "xclk";
+		status = "okay";
+
+		port {
+			ov5640_dvp_ep: endpoint {
+				remote-endpoint = <&fimc2_ep>;
+				bus-width = <8>;
+				hsync-active = <0>;
+				vsync-active = <1>;
+				pclk-sample = <1>;
+			};
+		};
 	};
 };
 
@@ -239,6 +289,52 @@
 	status = "okay";
 	bus-width = <8>;
 	cap-mmc-highspeed;
+};
+
+
+&fimc_0 {
+	status = "disabled";
+	assigned-clocks = <&clock CLK_MOUT_FIMC0>,
+			<&clock CLK_SCLK_FIMC0>;
+	assigned-clock-parents = <&clock CLK_MOUT_MPLL_USER_T>;
+	assigned-clock-rates = <0>, <176000000>;
+};
+
+&fimc_1 {
+	status = "disabled";
+	assigned-clocks = <&clock CLK_MOUT_FIMC1>,
+			<&clock CLK_SCLK_FIMC1>;
+	assigned-clock-parents = <&clock CLK_MOUT_MPLL_USER_T>;
+	assigned-clock-rates = <0>, <176000000>;
+};
+
+&fimc_2 {
+	status = "okay";
+	assigned-clocks = <&clock CLK_MOUT_FIMC2>,
+			<&clock CLK_SCLK_FIMC2>;
+	assigned-clock-parents = <&clock CLK_MOUT_MPLL_USER_T>;
+	assigned-clock-rates = <0>, <176000000>;
+};
+
+&fimc_3 {
+	status = "okay";
+	assigned-clocks = <&clock CLK_MOUT_FIMC3>,
+			<&clock CLK_SCLK_FIMC3>;
+	assigned-clock-parents = <&clock CLK_MOUT_MPLL_USER_T>;
+	assigned-clock-rates = <0>, <176000000>;
+};
+
+&fimc_lite_0 {
+	status = "okay";
+};
+
+&fimc_lite_1 {
+	status = "okay";
+};
+
+
+&fimc_is {
+	status = "okay";
 };
 
 &fimd {
