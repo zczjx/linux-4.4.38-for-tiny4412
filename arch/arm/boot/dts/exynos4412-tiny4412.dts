@@ -139,11 +139,10 @@
 		parallel-ports {
 			#address-cells = <1>;
 			#size-cells = <0>;
-
 			/* camera A input */
-			port@1 {
+			port@0 {
 				reg = <1>;
-				fimc2_ep: endpoint {
+				fimc0_ep: endpoint {
 					remote-endpoint = <&ov5640_dvp_ep>;
 					bus-width = <8>;
 					hsync-active = <1>;
@@ -211,7 +210,7 @@
 
 		port {
 			ov5640_dvp_ep: endpoint {
-				remote-endpoint = <&fimc2_ep>;
+				remote-endpoint = <&fimc0_ep>;
 				bus-width = <8>;
 				hsync-active = <0>;
 				vsync-active = <1>;
@@ -293,7 +292,7 @@
 
 
 &fimc_0 {
-	status = "disabled";
+	status = "okay";
 	assigned-clocks = <&clock CLK_MOUT_FIMC0>,
 			<&clock CLK_SCLK_FIMC0>;
 	assigned-clock-parents = <&clock CLK_MOUT_MPLL_USER_T>;
@@ -309,7 +308,7 @@
 };
 
 &fimc_2 {
-	status = "okay";
+	status = "disabled";
 	assigned-clocks = <&clock CLK_MOUT_FIMC2>,
 			<&clock CLK_SCLK_FIMC2>;
 	assigned-clock-parents = <&clock CLK_MOUT_MPLL_USER_T>;
@@ -317,7 +316,7 @@
 };
 
 &fimc_3 {
-	status = "okay";
+	status = "disabled";
 	assigned-clocks = <&clock CLK_MOUT_FIMC3>,
 			<&clock CLK_SCLK_FIMC3>;
 	assigned-clock-parents = <&clock CLK_MOUT_MPLL_USER_T>;
