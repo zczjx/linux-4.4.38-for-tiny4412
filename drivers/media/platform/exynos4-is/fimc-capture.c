@@ -53,6 +53,7 @@ static int fimc_capture_hw_init(struct fimc_dev *fimc)
 	fimc_set_yuv_order(ctx);
 
 	fimc_hw_set_camera_polarity(fimc, si);
+	fimc_hw_set_enable_lastend(fimc);
 	fimc_hw_set_camera_type(fimc, si);
 	fimc_hw_set_camera_source(fimc, si);
 	fimc_hw_set_camera_offset(fimc, &ctx->s_frame);
@@ -928,6 +929,8 @@ static int __video_try_or_set_format(struct fimc_dev *fimc,
 	struct fimc_ctx *ctx = vc->ctx;
 	unsigned int width = 0, height = 0;
 	int ret = 0;
+	struct v4l2_mbus_framefmt mbus_fmt;
+	struct v4l2_mbus_framefmt *mf;
 
 	/* Pre-configure format at the camera input interface, for JPEG only */
 	if (fimc_jpeg_fourcc(pix->pixelformat)) {
@@ -957,26 +960,21 @@ static int __video_try_or_set_format(struct fimc_dev *fimc,
 	}
 
 	/* Try to match format at the host and the sensor */
-	if (!vc->user_subdev_api) {
-		struct v4l2_mbus_framefmt mbus_fmt;
-		struct v4l2_mbus_framefmt *mf;
+	mf = try ? &mbus_fmt : &fimc->vid_cap.ci_fmt;
 
-		mf = try ? &mbus_fmt : &fimc->vid_cap.ci_fmt;
+	mf->code = (*out_fmt)->mbus_code;
+	mf->width = pix->width;
+	mf->height = pix->height;
 
-		mf->code = (*out_fmt)->mbus_code;
-		mf->width = pix->width;
-		mf->height = pix->height;
+	fimc_md_graph_lock(ve);
+	ret = fimc_pipeline_try_format(ctx, mf, inp_fmt, try);
+	fimc_md_graph_unlock(ve);
 
-		fimc_md_graph_lock(ve);
-		ret = fimc_pipeline_try_format(ctx, mf, inp_fmt, try);
-		fimc_md_graph_unlock(ve);
+	if (ret < 0)
+		return ret;
 
-		if (ret < 0)
-			return ret;
-
-		pix->width = mf->width;
-		pix->height = mf->height;
-	}
+	pix->width = mf->width;
+	pix->height = mf->height;
 
 	fimc_adjust_mplane_format(*out_fmt, pix->width, pix->height, pix);
 
@@ -1054,11 +1052,9 @@ static int __fimc_capture_set_format(struct fimc_dev *fimc,
 	fimc_capture_mark_jpeg_xfer(ctx, ff->fmt->color);
 
 	/* Reset cropping and set format at the camera interface input */
-	if (!vc->user_subdev_api) {
-		ctx->s_frame.fmt = inp_fmt;
-		set_frame_bounds(&ctx->s_frame, pix->width, pix->height);
-		set_frame_crop(&ctx->s_frame, 0, 0, pix->width, pix->height);
-	}
+	ctx->s_frame.fmt = inp_fmt;
+	set_frame_bounds(&ctx->s_frame, pix->width, pix->height);
+	set_frame_crop(&ctx->s_frame, 0, 0, pix->width, pix->height);
 
 	return ret;
 }
@@ -1259,14 +1255,28 @@ static int fimc_cap_reqbufs(struct file *file, void *priv,
 			    struct v4l2_requestbuffers *reqbufs)
 {
 	struct fimc_dev *fimc = video_drvdata(file);
-	int ret;
+	int ret, i;
 
+	fimc_hw_set_dma_seq(fimc, 0x0);
 	ret = vb2_ioctl_reqbufs(file, priv, reqbufs);
 
 	if (!ret)
 		fimc->vid_cap.reqbufs_count = reqbufs->count;
 
+	for (i = 0; i < reqbufs->count; i++)
+		fimc_hw_set_dma_buf_seq(fimc, i, 1);
+
 	return ret;
+}
+
+static int fimc_cap_qbuf(struct file *file, void *fh, struct v4l2_buffer *b)
+{
+	struct fimc_dev *fimc = video_drvdata(file);
+	int idx = b->index;
+
+	fimc_hw_set_dma_buf_seq(fimc, idx, 1);
+
+	return vb2_ioctl_qbuf(file, fh, b);
 }
 
 static int fimc_cap_g_selection(struct file *file, void *fh,
@@ -1356,6 +1366,15 @@ static int fimc_cap_s_selection(struct file *file, void *fh,
 	return 0;
 }
 
+static int fimc_cap_log_status(struct file *filp, void *fh)
+{
+	struct fimc_dev *fimc = video_drvdata(filp);
+
+	fimc_hw_regs_dump(fimc);
+
+	return 0;
+}
+
 static const struct v4l2_ioctl_ops fimc_capture_ioctl_ops = {
 	.vidioc_querycap		= fimc_cap_querycap,
 
@@ -1366,7 +1385,7 @@ static const struct v4l2_ioctl_ops fimc_capture_ioctl_ops = {
 
 	.vidioc_reqbufs			= fimc_cap_reqbufs,
 	.vidioc_querybuf		= vb2_ioctl_querybuf,
-	.vidioc_qbuf			= vb2_ioctl_qbuf,
+	.vidioc_qbuf			= fimc_cap_qbuf,
 	.vidioc_dqbuf			= vb2_ioctl_dqbuf,
 	.vidioc_expbuf			= vb2_ioctl_expbuf,
 	.vidioc_prepare_buf		= vb2_ioctl_prepare_buf,
@@ -1381,6 +1400,7 @@ static const struct v4l2_ioctl_ops fimc_capture_ioctl_ops = {
 	.vidioc_enum_input		= fimc_cap_enum_input,
 	.vidioc_s_input			= fimc_cap_s_input,
 	.vidioc_g_input			= fimc_cap_g_input,
+	.vidioc_log_status		= fimc_cap_log_status,
 };
 
 /* Capture subdev media entity operations */

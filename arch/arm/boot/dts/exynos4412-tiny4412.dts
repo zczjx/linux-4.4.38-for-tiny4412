@@ -100,7 +100,7 @@
 		interrupts = <0 40 0>;
 		clocks = <&clock CLK_PWM>;
 		clock-names = "timer-3";
-		status = "disabled";
+		status = "okay";
 	};
 	
  	usb-hub {
@@ -147,7 +147,7 @@
 					bus-width = <8>;
 					hsync-active = <1>;
 					vsync-active = <1>;
-					pclk-sample = <0>;
+					pclk-sample = <1>;
 				};
 			};
 		};
@@ -205,14 +205,14 @@
 		reset-gpios = <&gpm2 3 GPIO_ACTIVE_LOW>;
 		clock-frequency = <24000000>;
 		clocks = <&camera 0>;
-		clock-names = "xclk";
+		clock-names = "sclk_cam0";
 		status = "okay";
 
 		port {
 			ov5640_dvp_ep: endpoint {
 				remote-endpoint = <&fimc0_ep>;
 				bus-width = <8>;
-				hsync-active = <0>;
+				hsync-active = <1>;
 				vsync-active = <1>;
 				pclk-sample = <1>;
 			};

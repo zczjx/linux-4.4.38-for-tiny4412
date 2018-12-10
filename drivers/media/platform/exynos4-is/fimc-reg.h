@@ -50,6 +50,7 @@
 #define FIMC_REG_CIGCTRL_HREF_MASK		(1 << 21)
 #define FIMC_REG_CIGCTRL_IRQ_LEVEL		(1 << 20)
 #define FIMC_REG_CIGCTRL_IRQ_CLR		(1 << 19)
+#define FIMC_REG_CIGCTRL_IRQ_END_DISABLE	(1 << 18)
 #define FIMC_REG_CIGCTRL_IRQ_ENABLE		(1 << 16)
 #define FIMC_REG_CIGCTRL_SHDW_DISABLE		(1 << 12)
 /* 0 - selects Writeback A (LCD), 1 - selects Writeback B (LCD/ISP) */
@@ -111,6 +112,8 @@
 #define FIMC_REG_CIOCTRL_ORDER2P_SHIFT		24
 #define FIMC_REG_CIOCTRL_ORDER2P_MASK		(3 << 24)
 #define FIMC_REG_CIOCTRL_ORDER422_2P_LSB_CRCB	(0 << 24)
+#define FIMC_REG_CIOCTRL_LASTENDEN		(1 << 30)
+
 
 /* Pre-scaler control 1 */
 #define FIMC_REG_CISCPRERATIO			0x50
@@ -311,6 +314,9 @@ int fimc_hw_set_camera_source(struct fimc_dev *fimc,
 void fimc_hw_set_camera_offset(struct fimc_dev *fimc, struct fimc_frame *f);
 int fimc_hw_set_camera_polarity(struct fimc_dev *fimc,
 				struct fimc_source_info *cam);
+int fimc_hw_set_enable_lastend(struct fimc_dev *fimc);
+int fimc_hw_set_disable_lastend(struct fimc_dev *fimc);
+
 int fimc_hw_set_camera_type(struct fimc_dev *fimc,
 			    struct fimc_source_info *cam);
 void fimc_hw_clear_irq(struct fimc_dev *dev);
@@ -322,6 +328,9 @@ s32 fimc_hw_get_prev_frame_index(struct fimc_dev *dev);
 int fimc_hw_camblk_cfg_writeback(struct fimc_dev *fimc);
 void fimc_activate_capture(struct fimc_ctx *ctx);
 void fimc_deactivate_capture(struct fimc_dev *fimc);
+void fimc_hw_regs_dump(struct fimc_dev *fimc);
+void fimc_hw_enable_frame_end_irq(struct fimc_dev *fimc);
+void fimc_hw_disable_frame_end_irq(struct fimc_dev *fimc);
 
 /**
  * fimc_hw_set_dma_seq - configure output DMA buffer sequence
@@ -334,5 +343,17 @@ static inline void fimc_hw_set_dma_seq(struct fimc_dev *dev, u32 mask)
 {
 	writel(mask, dev->regs + FIMC_REG_CIFCNTSEQ);
 }
+
+static inline void fimc_hw_set_dma_buf_seq(struct fimc_dev *dev,
+	u32 shift, u32 enable)
+{
+	u32 cfg = readl(dev->regs + FIMC_REG_CIFCNTSEQ);
+	u32 mask = 0x00000001 << shift;
+
+	cfg &= (~mask);
+	cfg |= (enable << shift);
+	writel(cfg, dev->regs + FIMC_REG_CIFCNTSEQ);
+}
+
 
 #endif /* FIMC_REG_H_ */

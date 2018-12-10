@@ -19,6 +19,36 @@
 #include "fimc-reg.h"
 #include "fimc-core.h"
 
+static void fimc_reset_cfg(struct fimc_dev *dev)
+{
+	int i;
+	u32 cfg[][2] = {
+		{ 0x018, 0x00000000 }, { 0x01c, 0x00000000 },
+		{ 0x020, 0x00000000 }, { 0x024, 0x00000000 },
+		{ 0x028, 0x00000000 }, { 0x02c, 0x00000000 },
+		{ 0x030, 0x00000000 }, { 0x034, 0x00000000 },
+		{ 0x038, 0x00000000 }, { 0x03c, 0x00000000 },
+		{ 0x040, 0x00000000 }, { 0x044, 0x00000000 },
+		{ 0x048, 0x00000000 }, { 0x04c, 0x00000000 },
+		{ 0x050, 0x00000000 }, { 0x054, 0x00000000 },
+		{ 0x058, 0x18000000 }, { 0x05c, 0x00000000 },
+		{ 0x064, 0x00000000 },
+		{ 0x0c0, 0x00000000 }, { 0x0c4, 0xffffffff },
+		{ 0x0d0, 0x00100080 }, { 0x0d4, 0x00000000 },
+		{ 0x0d8, 0x00000000 }, { 0x0dc, 0x00000000 },
+		{ 0x0f8, 0x00000000 }, { 0x0fc, 0x04000000 },
+		{ 0x168, 0x00000000 }, { 0x16c, 0x00000000 },
+		{ 0x170, 0x00000000 }, { 0x174, 0x00000000 },
+		{ 0x178, 0x00000000 }, { 0x17c, 0x00000000 },
+		{ 0x180, 0x00000000 }, { 0x184, 0x00000000 },
+		{ 0x188, 0x00000000 }, { 0x18c, 0x00000000 },
+		{ 0x194, 0x0000001e },
+	};
+
+	for (i = 0; i < sizeof(cfg) / 8; i++)
+		writel(cfg[i][1], dev->regs + cfg[i][0]);
+}
+
 void fimc_hw_reset(struct fimc_dev *dev)
 {
 	u32 cfg;
@@ -229,6 +259,26 @@ void fimc_hw_en_lastirq(struct fimc_dev *dev, int enable)
 	else
 		cfg &= ~FIMC_REG_CIOCTRL_LASTIRQ_ENABLE;
 	writel(cfg, dev->regs + FIMC_REG_CIOCTRL);
+}
+
+int fimc_hw_set_enable_lastend(struct fimc_dev *fimc)
+{
+	u32 cfg = readl(fimc->regs + FIMC_REG_CIOCTRL);
+
+	cfg |= FIMC_REG_CIOCTRL_LASTENDEN;
+	writel(cfg, fimc->regs + FIMC_REG_CIOCTRL);
+
+	return 0;
+}
+
+int fimc_hw_set_disable_lastend(struct fimc_dev *fimc)
+{
+	u32 cfg = readl(fimc->regs + FIMC_REG_CIOCTRL);
+
+	cfg &= ~FIMC_REG_CIOCTRL_LASTENDEN;
+	writel(cfg, fimc->regs + FIMC_REG_CIOCTRL);
+
+	return 0;
 }
 
 void fimc_hw_set_prescaler(struct fimc_ctx *ctx)
@@ -592,7 +642,7 @@ struct mbus_pixfmt_desc {
 };
 
 static const struct mbus_pixfmt_desc pix_desc[] = {
-	{ MEDIA_BUS_FMT_YUYV8_2X8, FIMC_REG_CISRCFMT_ORDER422_YCBYCR, 8 },
+	{ MEDIA_BUS_FMT_YUYV8_2X8, FIMC_REG_CISRCFMT_ORDER422_CBYCRY, 8 },
 	{ MEDIA_BUS_FMT_YVYU8_2X8, FIMC_REG_CISRCFMT_ORDER422_YCRYCB, 8 },
 	{ MEDIA_BUS_FMT_VYUY8_2X8, FIMC_REG_CISRCFMT_ORDER422_CRYCBY, 8 },
 	{ MEDIA_BUS_FMT_UYVY8_2X8, FIMC_REG_CISRCFMT_ORDER422_CBYCRY, 8 },
@@ -731,6 +781,22 @@ int fimc_hw_set_camera_type(struct fimc_dev *fimc,
 	return 0;
 }
 
+void fimc_hw_enable_frame_end_irq(struct fimc_dev *fimc)
+{
+	u32 cfg = readl(fimc->regs + FIMC_REG_CIGCTRL);
+
+	cfg |= FIMC_REG_CIGCTRL_IRQ_END_DISABLE;
+	writel(cfg, fimc->regs + FIMC_REG_CIGCTRL);
+}
+
+void fimc_hw_disable_frame_end_irq(struct fimc_dev *fimc)
+{
+	u32 cfg = readl(fimc->regs + FIMC_REG_CIGCTRL);
+
+	cfg &= ~FIMC_REG_CIGCTRL_IRQ_END_DISABLE;
+	writel(cfg, fimc->regs + FIMC_REG_CIGCTRL);
+}
+
 void fimc_hw_clear_irq(struct fimc_dev *dev)
 {
 	u32 cfg = readl(dev->regs + FIMC_REG_CIGCTRL);
@@ -840,3 +906,18 @@ int fimc_hw_camblk_cfg_writeback(struct fimc_dev *fimc)
 
 	return regmap_update_bits(map, SYSREG_ISPBLK, mask, mask);
 }
+
+void fimc_hw_regs_dump(struct fimc_dev *fimc)
+{
+	int i;
+	u32 cfg[] = {0x0, 0x4, 0x8, 0x14, 0x18, 0x1C, 0x20, 0x24, 0x28, 0x2c, 0x30,
+				0x34, 0x38, 0x3c, 0x40, 0x44, 0x48, 0x4c, 0x50, 0x54, 0x58, 0x5c,
+				0x60, 0x64, 0x68, 0xc0, 0xc4, 0xc8, 0xd0, 0xd4, 0xd8, 0xdc, 0xec,
+				0xf0, 0xf4, 0xf8, 0xfc, 0x144, 0x148, 0x14c, 0x168, 0x16c, 0x170,
+				0x174, 0x178, 0x180, 0x184,0x188, 0x18c, 0x194, 0x19c, 0x1a0, 0x1fc,};
+
+	for (i = 0; i < sizeof(cfg) / 4; i++)
+		printk("idx = 0x%x \tval 0x%08x \n", cfg[i], readl(fimc->regs + cfg[i]));
+
+}
+
