@@ -70,15 +70,6 @@
 #define V4L2_CID_SCENE_EXPOSURE         (V4L2_CTRL_CLASS_CAMERA | 0x1001)
 #define V4L2_CID_PRIVATE_PREV_CAPT      (V4L2_CTRL_CLASS_CAMERA | 0x1002)
 
-/*******
-enum {
-	V4L2_WHITE_BALANCE_INCANDESCENT = 0,
-	V4L2_WHITE_BALANCE_FLUORESCENT,
-	V4L2_WHITE_BALANCE_DAYLIGHT,
-	V4L2_WHITE_BALANCE_CLOUDY_DAYLIGHT,
-	V4L2_WHITE_BALANCE_TUNGSTEN
-};
-***/
 
 struct regval_list {
 	u16 reg;
@@ -249,7 +240,7 @@ static const struct regval_list ov5640_init_regs[] = {
 	{0x3018, 0xff},
 	{0x3034, 0x1a},
 	{0x3035, 0x21},
-	{0x3036, 0x46},
+	{0x3036, 0x86}, /*30fps*/     
 	{0x3037, 0x13},
 	{0x3108, 0x01},
 	{0x3630, 0x36},
@@ -513,6 +504,8 @@ static const struct regval_list ov5640_qvga_regs[] = {
 };
 
 static const struct regval_list ov5640_svga_regs[] = {
+	{0x3036, 0x86}, /*30fps*/                              
+  	{0x3037, 0x13},     
 	{0x3503, 0x00},
 	{0x3c07, 0x08},
 	{0x3820, 0x41},
@@ -559,6 +552,8 @@ static const struct regval_list ov5640_svga_regs[] = {
 
 
 static const struct regval_list ov5640_vga_regs[] = {
+	{0x3036, 0x86}, /*30fps*/                              
+  	{0x3037, 0x13}, 
 	{0x3800, 0x00}, /* image windowing */
 	{0x3801, 0x00},
 	{0x3802, 0x00},
@@ -584,8 +579,8 @@ static const struct regval_list ov5640_vga_regs[] = {
 
 /* 2592x1944 QSXGA */
 static const struct regval_list ov5640_qsxga_regs[] = {//caichsh
-	{0x3503, 0x07},
-	{0x3a00, 0x78},
+	{0x3036, 0x86}, /*30fps*/                              
+  	{0x3037, 0x13},     
 	{0x350c, 0x00},
 	{0x350d, 0x00},
 	{0x3c07, 0x07},
@@ -631,8 +626,8 @@ static const struct regval_list ov5640_qxga_regs[] = {//caichsh
 #else
 	{0x3035,0x41},                         
 #endif                               
-	{0x3036,0x54},                               
-	{0x3037,0x13},                               
+	{0x3036, 0x86}, /*30fps*/                              
+  	{0x3037, 0x13},                                   
 	{0x3108,0x01},                               
 	{0x3824,0x01},                               
 	{REG_DLY,0x05},//delay 5ms              
@@ -713,8 +708,8 @@ static const struct regval_list ov5640_uxga_regs[] = {//caichsh
 #else
 	{0x3035,0x41},                         
 #endif                                                                                                           
-	{0x3036,0x54},                                                                                                             
-	{0x3037,0x13},                                                                                                             
+	{0x3036, 0x86}, /*30fps*/                              
+  	{0x3037, 0x13},                                                                                                                 
 	{0x3108,0x01},                                                                                                             
 	{0x3824,0x01},                                                                                                             
 	{REG_DLY,0x05},//delay 5ms                                        
@@ -802,8 +797,8 @@ static const struct regval_list ov5640_sxga_regs[] = {//caichsh
 #else
 	{0x3035,0x21},                         
 #endif                                                        
-	{0x3036,0x54},                                                      
-	{0x3037,0x13},                                                      
+	{0x3036, 0x86}, /*30fps*/                              
+  	{0x3037, 0x13},                                                        
 	{0x3108,0x01},                                                      
 	{0x3824,0x01},                                                      
 	{REG_DLY,0x05},//delay 5ms                                  
@@ -891,10 +886,11 @@ static const struct regval_list ov5640_sxga_regs[] = {//caichsh
 	ENDMARKER,
 };
 
-/* 720p 15fps @ 1280x720 */
+/* 720p 30fps @ 1280x720 */
 static const struct regval_list ov5640_720p_regs[] = {
-	{0x3503, 0x00},
-		
+	{0x3036,0x80}, /*30fps*/                              
+  	{0x3037,0x13},     
+	{0x3503,0x00},	
 	{0x3c07,0x07},
 	{0x3803,0xfa},
 	{0x3806,0x06},////
@@ -944,8 +940,8 @@ static const struct regval_list ov5640_xga_regs[] = {//caichsh
 #else
 	{0x3035,0x41},                         
 #endif
-	{0x3036,0x54},
-	{0x3037,0x13},
+	{0x3036,0x86}, /*30fps*/                              
+  	{0x3037,0x13},     
 	{0x3108,0x01},
 	{0x3824,0x01},
 	{REG_DLY,0x05},//delay 5ms
@@ -1135,9 +1131,9 @@ static const struct ov5640_color_format ov5640_cfmts[] = {
 #define SVGA_WIDTH           800
 #define SVGA_HEIGHT          600
 
-static unsigned int frame_rate_vga[] = {12,};
-static unsigned int frame_rate_svga[] = {12,};
-static unsigned int frame_rate_uxga[] = {12,};
+static unsigned int frame_rate_vga[] = {30,};
+static unsigned int frame_rate_svga[] = {30,};
+static unsigned int frame_rate_uxga[] = {30,};
 
 /* 640X480 */
 static const struct ov5640_win_size ov5640_win_vga = {
