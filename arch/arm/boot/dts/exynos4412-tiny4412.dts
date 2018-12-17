@@ -31,6 +31,22 @@
 		reg = <0x40000000 0x40000000>;
 	};
 
+	reserved-memory {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		ranges;
+
+		/* global autoconfigured region for contiguous allocations */
+		fimc_is_dma: fimc_is_cma@0 {
+			compatible = "shared-dma-pool";
+			no-map;
+			size = <0x4000000>;
+			alignment = <0x4000000>;
+			linux,cma-default;
+		};
+		
+	};
+
 	thermal-zones {
 		cpu_thermal: cpu-thermal {
 			cooling-maps {
@@ -333,6 +349,7 @@
 
 
 &fimc_is {
+	memory-region = <&fimc_is_dma>;
 	status = "okay";
 };
 

@@ -31,6 +31,7 @@
 #include <linux/slab.h>
 #include <linux/types.h>
 #include <linux/videodev2.h>
+#include <linux/of_reserved_mem.h>
 #include <media/videobuf2-dma-contig.h>
 
 #include "media-dev.h"
@@ -841,6 +842,15 @@ static int fimc_is_probe(struct platform_device *pdev)
 	if (ret < 0)
 		goto err_pm;
 
+	ret = of_reserved_mem_device_init(dev);
+
+	if(ret) {
+		dev_err(dev, "Could not get reserved memory\n");
+		goto err_pm;
+	}
+
+	dma_set_coherent_mask(dev, 0xFFFFFFFF);
+
 	is->alloc_ctx = vb2_dma_contig_init_ctx(dev);
 	if (IS_ERR(is->alloc_ctx)) {
 		ret = PTR_ERR(is->alloc_ctx);
@@ -859,12 +869,13 @@ static int fimc_is_probe(struct platform_device *pdev)
 		goto err_sd;
 
 	ret = fimc_is_request_firmware(is, FIMC_IS_FW_FILENAME);
-	if (ret < 0)
+	if (ret < 0) {
 		goto err_dfs;
+	}
 
 	pm_runtime_put_sync(dev);
 
-	dev_dbg(dev, "FIMC-IS registered successfully\n");
+	dev_info(dev, "FIMC-IS registered successfully\n");
 	return 0;
 
 err_dfs:
