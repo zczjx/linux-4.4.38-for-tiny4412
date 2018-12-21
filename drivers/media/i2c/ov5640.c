@@ -2286,7 +2286,7 @@ static int ov5640_probe(struct i2c_client *client, const struct i2c_device_id *i
 	priv->xclk = devm_clk_get(dev, "sclk_cam0");
 	
 	if (IS_ERR(priv->xclk)) {
-		dev_err(dev, "failed to get xclk\n");
+		dev_err(dev, "failed to get sclk_cam0\n");
 		return PTR_ERR(priv->xclk);
 	}
 
