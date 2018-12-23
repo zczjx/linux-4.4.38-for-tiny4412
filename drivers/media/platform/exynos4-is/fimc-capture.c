@@ -929,8 +929,6 @@ static int __video_try_or_set_format(struct fimc_dev *fimc,
 	struct fimc_ctx *ctx = vc->ctx;
 	unsigned int width = 0, height = 0;
 	int ret = 0;
-	struct v4l2_mbus_framefmt mbus_fmt;
-	struct v4l2_mbus_framefmt *mf;
 
 	/* Pre-configure format at the camera input interface, for JPEG only */
 	if (fimc_jpeg_fourcc(pix->pixelformat)) {
@@ -960,21 +958,26 @@ static int __video_try_or_set_format(struct fimc_dev *fimc,
 	}
 
 	/* Try to match format at the host and the sensor */
-	mf = try ? &mbus_fmt : &fimc->vid_cap.ci_fmt;
+	if (!vc->user_subdev_api) {
+		struct v4l2_mbus_framefmt mbus_fmt;
+		struct v4l2_mbus_framefmt *mf;
 
-	mf->code = (*out_fmt)->mbus_code;
-	mf->width = pix->width;
-	mf->height = pix->height;
+		mf = try ? &mbus_fmt : &fimc->vid_cap.ci_fmt;
 
-	fimc_md_graph_lock(ve);
-	ret = fimc_pipeline_try_format(ctx, mf, inp_fmt, try);
-	fimc_md_graph_unlock(ve);
+		mf->code = (*out_fmt)->mbus_code;
+		mf->width = pix->width;
+		mf->height = pix->height;
 
-	if (ret < 0)
-		return ret;
+		fimc_md_graph_lock(ve);
+		ret = fimc_pipeline_try_format(ctx, mf, inp_fmt, try);
+		fimc_md_graph_unlock(ve);
 
-	pix->width = mf->width;
-	pix->height = mf->height;
+		if (ret < 0)
+			return ret;
+
+		pix->width = mf->width;
+		pix->height = mf->height;
+	}
 
 	fimc_adjust_mplane_format(*out_fmt, pix->width, pix->height, pix);
 
@@ -1052,9 +1055,11 @@ static int __fimc_capture_set_format(struct fimc_dev *fimc,
 	fimc_capture_mark_jpeg_xfer(ctx, ff->fmt->color);
 
 	/* Reset cropping and set format at the camera interface input */
-	ctx->s_frame.fmt = inp_fmt;
-	set_frame_bounds(&ctx->s_frame, pix->width, pix->height);
-	set_frame_crop(&ctx->s_frame, 0, 0, pix->width, pix->height);
+	if (!vc->user_subdev_api) {
+		ctx->s_frame.fmt = inp_fmt;
+		set_frame_bounds(&ctx->s_frame, pix->width, pix->height);
+		set_frame_crop(&ctx->s_frame, 0, 0, pix->width, pix->height);
+	}
 
 	return ret;
 }

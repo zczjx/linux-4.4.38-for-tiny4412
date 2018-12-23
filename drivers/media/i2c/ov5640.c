@@ -1450,7 +1450,7 @@ static int ov5640_set_params(struct v4l2_subdev *sd,
 	/* select color format */
 	priv->cfmt = NULL;
 	for (i = 0; i < ARRAY_SIZE(ov5640_cfmts); i++) {
-		printk("%s........parma code:%d support code:%d...........\n",__func__,
+		printk("%s......parma code:0x%x support code:0x%x.........\n",__func__,
 				code,ov5640_cfmts[i].code);
 		if (code == ov5640_cfmts[i].code) {
 			priv->cfmt = ov5640_cfmts + i;
@@ -2149,7 +2149,7 @@ static const struct v4l2_subdev_core_ops ov5640_subdev_core_ops = {
 };
 
 static const struct v4l2_subdev_video_ops ov5640_subdev_video_ops = {
-	.s_stream               = ov5640_s_stream,
+	.s_stream       = ov5640_s_stream,
 };
 
 
