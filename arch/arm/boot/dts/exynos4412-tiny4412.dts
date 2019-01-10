@@ -44,7 +44,8 @@
 			alignment = <0x4000000>;
 			linux,cma-default;
 		};
-		
+
+
 	};
 
 	thermal-zones {
@@ -455,6 +456,9 @@
 	status = "okay";
 };
 
+&jpeg_codec {
+	status = "okay";
+};
 
 &exynos_usbphy {
 	status = "okay";
