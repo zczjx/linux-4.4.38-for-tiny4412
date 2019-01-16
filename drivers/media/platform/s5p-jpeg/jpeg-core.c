@@ -1979,6 +1979,26 @@ error_free:
 	return ret;
 }
 
+static int jpeg_log_status(struct file *file, void *fh)
+{
+	struct s5p_jpeg_ctx *ctx = fh_to_ctx(fh);
+	struct s5p_jpeg *jpeg = ctx->jpeg;
+
+	int i;
+	u32 cfg[] = {0x0, 0x4, 0x8, 0x0c, 0x10, 0x14, 0x18, 0x1C,
+				0x20, 0x24, 0x28, 0x2c, 0x30, 0x34, 0x38, 0x3c,
+				0x40, 0x44, 0x48, 0x4c, 0x50, 0x54, 0x58,};
+
+	printk("zcz--> do [%s]\n", __FUNCTION__);
+	for (i = 0; i < sizeof(cfg) / 4; i++) {
+		printk("idx = 0x%x \tval 0x%08x \n", cfg[i], readl(jpeg->regs + cfg[i]));
+	}
+
+	return 0;
+
+}
+
+
 static const struct v4l2_ioctl_ops s5p_jpeg_ioctl_ops = {
 	.vidioc_querycap		= s5p_jpeg_querycap,
 
@@ -2004,6 +2024,7 @@ static const struct v4l2_ioctl_ops s5p_jpeg_ioctl_ops = {
 
 	.vidioc_g_selection		= s5p_jpeg_g_selection,
 	.vidioc_s_selection		= s5p_jpeg_s_selection,
+	.vidioc_log_status		= jpeg_log_status,
 };
 
 /*
