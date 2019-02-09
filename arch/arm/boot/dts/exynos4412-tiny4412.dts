@@ -44,8 +44,6 @@
 			alignment = <0x4000000>;
 			linux,cma-default;
 		};
-
-
 	};
 
 	thermal-zones {
@@ -348,7 +346,6 @@
 	status = "okay";
 };
 
-
 &fimc_is {
 	memory-region = <&fimc_is_dma>;
 	status = "okay";
@@ -457,6 +454,13 @@
 };
 
 &jpeg_codec {
+	clock-frequency = <160000000>;
+	status = "okay";
+};
+
+&mfc {
+	samsung,mfc-r = <0x43000000 0x800000>;
+	samsung,mfc-l = <0x51000000 0x800000>;
 	status = "okay";
 };
 
