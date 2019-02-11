@@ -315,7 +315,7 @@
 };
 
 &fimc_1 {
-	status = "disabled";
+	status = "okay";
 	assigned-clocks = <&clock CLK_MOUT_FIMC1>,
 			<&clock CLK_SCLK_FIMC1>;
 	assigned-clock-parents = <&clock CLK_MOUT_MPLL_USER_T>;
@@ -526,3 +526,4 @@
 &serial_3 {
 	status = "okay";
 };
+
